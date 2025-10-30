@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brainrot Notify | Server Joiner</title>
+    <title>Nova Hub | Server Joiner</title>
     <style>
         * {
             margin: 0;
@@ -120,10 +120,11 @@
 
         .info-value {
             color: #dc2626;
-            font-weight: 700;
-            font-family: 'Courier New', monospace;
+            font-weight: 800;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             font-size: 14px;
             text-shadow: 0 0 10px rgba(220, 38, 38, 0.5);
+            letter-spacing: 0.5px;
         }
 
         .loader {
@@ -242,10 +243,6 @@
                 <span class="info-label">Job ID</span>
                 <span class="info-value" id="jobId">-</span>
             </div>
-            <div class="info-item">
-                <span class="info-label">Status</span>
-                <span class="info-value" id="connection-status">CONNECTING</span>
-            </div>
         </div>
 
         <div id="error-box" class="error" style="display: none;">
@@ -274,7 +271,6 @@
         const errorBox = document.getElementById('error-box');
         const errorMessage = document.getElementById('error-message');
         const manualJoinBtn = document.getElementById('manual-join');
-        const connectionStatus = document.getElementById('connection-status');
 
         if (placeId && jobId) {
             document.getElementById('placeId').textContent = placeId;
@@ -289,9 +285,6 @@
             errorMessage.textContent = message;
             errorBox.style.display = 'block';
             manualJoinBtn.style.display = 'inline-block';
-            if (connectionStatus) {
-                connectionStatus.textContent = 'FAILED';
-            }
         }
 
         function joinServer() {
@@ -303,9 +296,6 @@
             const robloxUrl = `roblox://placeId=${placeId}&gameInstanceId=${jobId}`;
             
             statusEl.textContent = 'Launching Roblox...';
-            if (connectionStatus) {
-                connectionStatus.textContent = 'LAUNCHING';
-            }
 
             window.location.href = robloxUrl;
 
@@ -314,10 +304,6 @@
                 manualJoinBtn.style.display = 'inline-block';
                 manualJoinBtn.href = robloxUrl;
             }, 3000);
-
-            setTimeout(() => {
-                statusEl.textContent = 'You should be joining the server now...';
-            }, 1000);
         }
 
         manualJoinBtn.addEventListener('click', (e) => {
