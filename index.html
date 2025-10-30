@@ -310,21 +310,13 @@
             window.location.href = robloxUrl;
 
             setTimeout(() => {
-                statusEl.textContent = 'Roblox did not open automatically?';
                 loaderEl.style.display = 'none';
                 manualJoinBtn.style.display = 'inline-block';
                 manualJoinBtn.href = robloxUrl;
-                if (connectionStatus) {
-                    connectionStatus.textContent = 'MANUAL';
-                }
             }, 3000);
 
             setTimeout(() => {
-                titleEl.innerHTML = 'NOVA HUB <span class="glow-text">SUCCESS</span>';
                 statusEl.textContent = 'You should be joining the server now...';
-                if (connectionStatus) {
-                    connectionStatus.textContent = 'CONNECTED';
-                }
             }, 1000);
         }
 
