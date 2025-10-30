@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brainrot Notify | Server Joiner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0a0a;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            overflow: hidden;
+        }
+
+        /* Background animated gradient */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(220, 38, 38, 0.1) 0%, transparent 50%);
+            animation: rotate 20s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 60px 40px;
+            background: rgba(15, 15, 15, 0.9);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            border-radius: 24px;
+            box-shadow: 
+                0 0 60px rgba(220, 38, 38, 0.2),
+                inset 0 0 40px rgba(220, 38, 38, 0.05);
+            max-width: 600px;
+            width: 90%;
+            backdrop-filter: blur(20px);
+        }
+
+        .glow-text {
+            color: #dc2626;
+            text-shadow: 
+                0 0 10px rgba(220, 38, 38, 0.8),
+                0 0 20px rgba(220, 38, 38, 0.6),
+                0 0 30px rgba(220, 38, 38, 0.4);
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 12px;
+            font-weight: 800;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #888;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+
+        .status {
+            font-size: 18px;
+            margin: 30px 0;
+            color: #aaa;
+            font-weight: 500;
+        }
+
+        .info-box {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 30px;
+            border-radius: 16px;
+            margin: 30px 0;
+            border: 1px solid rgba(220, 38, 38, 0.2);
+            box-shadow: inset 0 0 20px rgba(220, 38, 38, 0.1);
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 0;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #666;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .info-value {
+            color: #dc2626;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            text-shadow: 0 0 10px rgba(220, 38, 38, 0.5);
+        }
+
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(220, 38, 38, 0.2);
+            border-top-color: #dc2626;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 30px auto;
+            box-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .button {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            color: white;
+            border: 1px solid rgba(220, 38, 38, 0.5);
+            padding: 16px 40px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 30px;
+            text-decoration: none;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 
+                0 4px 20px rgba(220, 38, 38, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .button:hover {
+            background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%);
+            transform: translateY(-2px);
+            box-shadow: 
+                0 6px 30px rgba(220, 38, 38, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .error {
+            background: rgba(220, 38, 38, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 30px;
+            border: 1px solid rgba(220, 38, 38, 0.4);
+            box-shadow: 0 0 20px rgba(220, 38, 38, 0.2);
+        }
+
+        .error-title {
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .error-message {
+            color: #aaa;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .footer {
+            margin-top: 50px;
+            color: #444;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .footer a {
+            color: #dc2626;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer a:hover {
+            color: #991b1b;
+            text-shadow: 0 0 10px rgba(220, 38, 38, 0.5);
+        }
+
+        .pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="title">NOVA HUB <span class="glow-text">JOINER</span></h1>
+        <div class="subtitle">Server Joiner</div>
+        
+        <div class="status" id="status">Initializing connection...</div>
+        
+        <div class="loader pulse" id="loader"></div>
+        
+        <div class="info-box" id="info-box" style="display: none;">
+            <div class="info-item">
+                <span class="info-label">Place ID</span>
+                <span class="info-value" id="placeId">-</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Job ID</span>
+                <span class="info-value" id="jobId">-</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Status</span>
+                <span class="info-value" id="connection-status">CONNECTING</span>
+            </div>
+        </div>
+
+        <div id="error-box" class="error" style="display: none;">
+            <div class="error-title">CONNECTION FAILED</div>
+            <p class="error-message" id="error-message"></p>
+        </div>
+
+        <a href="#" class="button" id="manual-join" style="display: none;">
+            OPEN ROBLOX
+        </a>
+
+        <div class="footer">
+            NOVA HUB | <a href="https://discord.gg/vgxbhBGZhQ" target="_blank">discord.gg/vgxbhBGZhQ</a>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const placeId = urlParams.get('placeId');
+        const jobId = urlParams.get('jobId');
+
+        const statusEl = document.getElementById('status');
+        const titleEl = document.getElementById('title');
+        const loaderEl = document.getElementById('loader');
+        const infoBox = document.getElementById('info-box');
+        const errorBox = document.getElementById('error-box');
+        const errorMessage = document.getElementById('error-message');
+        const manualJoinBtn = document.getElementById('manual-join');
+        const connectionStatus = document.getElementById('connection-status');
+
+        if (placeId && jobId) {
+            document.getElementById('placeId').textContent = placeId;
+            const shortJobId = jobId.length > 25 ? jobId.substring(0, 25) + '...' : jobId;
+            document.getElementById('jobId').textContent = shortJobId;
+            infoBox.style.display = 'block';
+        }
+
+        function showError(message) {
+            loaderEl.style.display = 'none';
+            statusEl.textContent = '';
+            errorMessage.textContent = message;
+            errorBox.style.display = 'block';
+            manualJoinBtn.style.display = 'inline-block';
+            if (connectionStatus) {
+                connectionStatus.textContent = 'FAILED';
+            }
+        }
+
+        function joinServer() {
+            if (!placeId || !jobId) {
+                showError('Invalid parameters. PlaceId or JobId missing from URL.');
+                return;
+            }
+
+            const robloxUrl = `roblox://placeId=${placeId}&gameInstanceId=${jobId}`;
+            
+            statusEl.textContent = 'Launching Roblox...';
+            if (connectionStatus) {
+                connectionStatus.textContent = 'LAUNCHING';
+            }
+
+            window.location.href = robloxUrl;
+
+            setTimeout(() => {
+                statusEl.textContent = 'Roblox did not open automatically?';
+                loaderEl.style.display = 'none';
+                manualJoinBtn.style.display = 'inline-block';
+                manualJoinBtn.href = robloxUrl;
+                if (connectionStatus) {
+                    connectionStatus.textContent = 'MANUAL';
+                }
+            }, 3000);
+
+            setTimeout(() => {
+                titleEl.innerHTML = 'NOVA HUB <span class="glow-text">SUCCESS</span>';
+                statusEl.textContent = 'You should be joining the server now...';
+                if (connectionStatus) {
+                    connectionStatus.textContent = 'CONNECTED';
+                }
+            }, 1000);
+        }
+
+        manualJoinBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const robloxUrl = `roblox://placeId=${placeId}&gameInstanceId=${jobId}`;
+            window.location.href = robloxUrl;
+        });
+
+        if (placeId && jobId) {
+            setTimeout(joinServer, 500);
+        } else {
+            showError('Invalid link. Make sure you use the complete link from Discord.');
+        }
+    </script>
+</body>
+</html>
