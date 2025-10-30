@@ -116,6 +116,7 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             font-weight: 600;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
 
         .info-value {
@@ -239,8 +240,6 @@
         
         <div class="status" id="status">Initializing connection...</div>
         
-        <div class="loader pulse" id="loader"></div>
-        
         <div class="info-box" id="info-box" style="display: none;">
             <div class="info-item">
                 <span class="info-label">Place ID</span>
@@ -273,7 +272,6 @@
 
         const statusEl = document.getElementById('status');
         const titleEl = document.getElementById('title');
-        const loaderEl = document.getElementById('loader');
         const infoBox = document.getElementById('info-box');
         const errorBox = document.getElementById('error-box');
         const errorMessage = document.getElementById('error-message');
@@ -287,7 +285,6 @@
         }
 
         function showError(message) {
-            loaderEl.style.display = 'none';
             statusEl.textContent = '';
             errorMessage.textContent = message;
             errorBox.style.display = 'block';
@@ -307,7 +304,6 @@
             window.location.href = robloxUrl;
 
             setTimeout(() => {
-                loaderEl.style.display = 'none';
                 manualJoinBtn.style.display = 'inline-block';
                 manualJoinBtn.href = robloxUrl;
             }, 3000);
